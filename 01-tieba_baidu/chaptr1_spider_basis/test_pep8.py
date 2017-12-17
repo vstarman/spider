@@ -5,8 +5,8 @@
 import json
 
 s = '{"hello": [1,2,3,4]}'
-
-print json.loads(s)
+print type(s)
+# print json.loads(s)
 
 
 
