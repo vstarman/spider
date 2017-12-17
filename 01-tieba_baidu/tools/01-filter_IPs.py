@@ -13,6 +13,7 @@ logging.warning('warning')
 logging.info('info')
 
 
+# 废弃代码
 def regex_filter(file_context):
     """
     正则匹配文件内容

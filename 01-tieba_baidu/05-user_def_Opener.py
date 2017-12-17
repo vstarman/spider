@@ -7,21 +7,25 @@
 import urllib2
 
 
-# 构建一个HTTPHandler 处理器对象，支持处理HTTP请求
-http_handler = urllib2.HTTPHandler(debuglevel=1)
+def send_request():
+    # 构建一个HTTPHandler 处理器对象，支持处理HTTP请求
+    http_handler = urllib2.HTTPHandler(debuglevel=1)
 
-# 构建一个HTTPHSandler 处理器对象，支持处理HTTPS请求，同时开启Debug Log，debuglevel 值默认 0
-https_handler = urllib2.HTTPSHandler(debuglevel=1)
+    # 构建一个HTTPHSandler 处理器对象，支持处理HTTPS请求，同时开启Debug Log，debuglevel 值默认 0
+    https_handler = urllib2.HTTPSHandler(debuglevel=1)
 
-# 调用urllib2.build_opener()方法，创建支持处理HTTP请求的opener对象
-opener = urllib2.build_opener(http_handler)
+    # 调用urllib2.build_opener()方法，创建支持处理HTTP请求的opener对象
+    opener = urllib2.build_opener(http_handler)
 
-# 构建 Request请求
-request = urllib2.Request('http://www.baidu.com')
+    # 构建 Request请求
+    request = urllib2.Request('http://www.baidu.com')
 
-# 调用自定义opener对象的open()方法，发送request请求
-# （注意区别：不再通过urllib2.urlopen()发送请求）
-response = opener.open(request)
+    # 调用自定义opener对象的open()方法，发送request请求
+    # （注意区别：不再通过urllib2.urlopen()发送请求）
+    response = opener.open(request)
 
-print response.read()
+    return response.read()
 
+
+if __name__ == '__main__':
+    print send_request()

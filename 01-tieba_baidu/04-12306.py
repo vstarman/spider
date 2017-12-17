@@ -4,9 +4,15 @@ import random
 import ssl
 from tieba_floder.settings import MY_USER_AGENT
 
+
+def create_unverified_context():
+    """create ssl auth"""
+    return ssl._create_unverified_context()
+
+
 if __name__ == '__main__':
     # 忽略ssl认证
-    context = ssl._create_unverified_context()
+    context = create_unverified_context()
 
     url = "https://www.12306.cn/mormhweb/"
     headers = {"User-Agent": random.choice(MY_USER_AGENT)}
