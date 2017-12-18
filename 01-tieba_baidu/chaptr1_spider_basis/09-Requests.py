@@ -55,7 +55,7 @@ def test_youdao():
 
 # 测试代理
 def test_proxies():
-    proxies = {'http': 'mr_mao_hacker:sffqry9r@120.27.218.32:16816'}
+    proxies = {"182.99.243.88": "808"}
     # export HTTP_PROXY = {'http': 'mr_mao_hacker:sffqry9r@120.27.218.32:16816'}
 
     response = requests.get("http://www.baidu.com", proxies=proxies)
@@ -102,7 +102,7 @@ def test_ssl():
 
 if __name__ == '__main__':
     # youdao_trans()
-    # test_proxies()
+    test_proxies()
     # test_cookie()
     # test_session()
-    test_ssl()
+    # test_ssl()

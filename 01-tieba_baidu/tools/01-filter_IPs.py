@@ -1,49 +1,13 @@
 # -*- coding:utf-8 -*-
 import os
-import re
-import logging
+import urllib2
+import time
+import json
 from bs4 import BeautifulSoup
-
-# create logger
-logger = logging.getLogger('simple_example')
-logger.setLevel(logging.DEBUG)
-logging.basicConfig(filename='example.log', level=logging.DEBUG)
-logging.debug("debug")
-logging.warning('warning')
-logging.info('info')
+from my_ips_poll import MY_IP_POLL
 
 
-# 废弃代码
-def regex_filter(file_context):
-    """
-    正则匹配文件内容
-    :param file_context: 文件内容
-    :return: 匹配后的ip数据
-    """
-    comp = """      <td>(\d+\.\d+\.\d+\.\d+)</td>
-      <td>(\d+)</td>
-      <td>
-        <a href="(.+)">(.+)</a>
-      </td>
-      <td class="country">(.+)</td>
-      <td>([HTTP|HTTPS])</td>"""
-    # re.findall()
-    # comp = "<td>(.+)</td>"
-    new_file_name = "MY_IPs.py"
-    with open(new_file_name, 'a') as w:
-        w.write("\n".join(re.findall(comp, file_context)))
-
-    # return ip_list
-
-
-# 保存列表到文件
-def save_ips(lst, filename):
-    with open(filename, 'w+') as w:
-        w.write(repr(lst))
-        w.close()
-
-
-# 过滤ip神器
+# 过滤ip
 def filter_ip(proxy, res):
     """
     匹配ip和port
@@ -80,7 +44,41 @@ def filter_ip(proxy, res):
         print e
 
 
-if __name__ == '__main__':
+# 保存列表到文件
+def save_ips(obj, filename):
+    with open(filename, 'w+') as w:
+        w.write(repr(obj))
+        w.close()
+
+
+# 测试ip是否可用
+def test_alive_ip(obj):
+    """
+    遍历测试列表内的ip是否可用
+    :param obj: 传入的列表对象
+    :return:
+    """
+    list_obj = []  # 用来保存验证通过的代理ip
+    for ip_dict in obj:
+        # 1.验证代理
+        proxy_handler = urllib2.ProxyHandler(ip_dict)
+        opener = urllib2.build_opener(proxy_handler)
+        response = None
+        try:
+            response = opener.open('http://www.httpbin.org/ip', timeout=1)
+        except Exception, err:
+            pass
+        if response:
+            try:
+                res_dict = json.loads(response.read())
+                if res_dict:
+                    print res_dict.encode('utf-8')
+            except Exception as e:
+                pass
+
+
+def main():
+    """主函数"""
     # 新文件名
     new_file_name = 'my_ips_poll.py'
     # 获取文件列表
@@ -97,3 +95,12 @@ if __name__ == '__main__':
         # 保存列表文件到py文件
         save_ips(vessel, new_file_name)
         f.close()
+
+
+if __name__ == '__main__':
+    # 1.验证代理
+    # proxy_handler = urllib2.ProxyHandler({'http': 'mr_mao_hacker:sffqry9r@120.27.218.32:16816'})
+    # opener = urllib2.build_opener(proxy_handler)
+    # response = opener.open('http://www.httpbin.org/ip')
+    # print response.read()
+    test_alive_ip(MY_IP_POLL)
