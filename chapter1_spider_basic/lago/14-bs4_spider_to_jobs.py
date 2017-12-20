@@ -6,6 +6,7 @@ import urllib
 import requests
 import json
 import time
+import csv
 import jsonpath
 import sys
 reload(sys)
@@ -94,8 +95,16 @@ class SpiderJobsLaGo(object):
                 item["companyFullName"] = result["companyFullName"]
                 item["firstType"] = result["firstType"]
                 self.item_list.append(item)
+            print "[INFO]: 第%d页数据保存成功!" % self.page
+
         except Exception as e:
             print "[ERROR]: 数据解析失败..."
+
+    def save_to_json(self):
+        """保存文件到磁盘"""
+        json.dump(self.item_list, open('14-lagou_jobs.json', 'w'))
+        print "[INFO]: 数据写入成功"
+
 
     def run(self):
         """程序主逻辑函数"""
@@ -104,8 +113,12 @@ class SpiderJobsLaGo(object):
             response = self.send_request()
             # 2.解析响应
             self.parse_page(response)
+
             time.sleep(0.3)
             self.page += 1
+
+        # 写入磁盘文件
+        self.save_to_json()
 
     @staticmethod
     def _property(self):
