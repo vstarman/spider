@@ -65,8 +65,12 @@ class SpiderJobsTenCent(object):
 
     def send_request(self, url):
         """发送请求,返回html"""
-        html = requests.get(url, headers=self.headers).content
-        return html
+        try:
+            html = requests.get(url, headers=self.headers).content
+            return html
+        except Exception as e:
+            print "[ERROR]: %s 请求发送失败..." % url
+            return None
 
     def parse_html(self, html):
         """用来解析html数据"""
@@ -88,9 +92,10 @@ class SpiderJobsTenCent(object):
     def save_list_to_json(self):
         """用来将python列表存储为json数据"""
         # 存储为json数据,禁用ascii编码处理中文
-        json_data = json.dumps(self.job_list, ensure_ascii=False)
-        with open('14-tecent.json', 'w') as f:
-            f.write(json_data.encode('utf-8'))
+        json.dump(self.job_list, open('14-tecent.json', 'w'))
+        # json_data = json.dumps(self.job_list, ensure_ascii=False)
+        # with open('14-tecent.json', 'w') as f:
+        #     f.write(json_data.encode('utf-8'))
         print '[INFO]Json数据保存成功!'
 
     def run(self):
@@ -111,7 +116,6 @@ class SpiderJobsTenCent(object):
                 break
 
         self.save_list_to_json()
-
 
 
 class SpiderZhiHu(object):
