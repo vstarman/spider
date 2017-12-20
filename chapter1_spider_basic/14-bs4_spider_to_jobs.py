@@ -59,9 +59,10 @@ class SpiderJobsTenCent(object):
     def __init__(self):
         self.base_url = 'http://hr.tencent.com/position.php?&start='
         self.detail_url = 'http://hr.tencent.com/position_detail.php?id=27267&keywords=python&tid=0&lid=2156'
-        self.pages = int(raw_input('请输入要爬取的页数(不输默爬取整站): '))
+        self.want_pages = raw_input('请输入要爬取的页数(不输默爬取整站): ')
         self.headers = {'User-Agent': MY_USER_AGENT[1]}
-        self.job_list = []
+        self.job_list = []   # 保存职位信息
+        self.page = 1  # 页面
 
     def send_request(self, url):
         """发送请求,返回html"""
@@ -87,34 +88,50 @@ class SpiderJobsTenCent(object):
             item['hiring_number'] = job.find_all('td')[2].get_text()         # 招聘人数
             item['work_location'] = job.find_all('td')[3].get_text()         # 工作地点
             item['publish_time'] = job.find_all('td')[4].get_text()          # 发布时间
+            # 保存每条职位信息
             self.job_list.append(item)
+
+            # 如果到最后一页,返回False
+            if soup.find('a', {'id': 'next', 'class': 'noactive'}):
+                return False
+
+            # 否则,提取下一页链接
+            next_link = 'http://hr.tencent.com/' + soup.find('a', {'id': 'next'}).get('href')
+            return next_link
 
     def save_list_to_json(self):
         """用来将python列表存储为json数据"""
         # 存储为json数据,禁用ascii编码处理中文
-        json.dump(self.job_list, open('14-tecent.json', 'w'))
         # json_data = json.dumps(self.job_list, ensure_ascii=False)
         # with open('14-tecent.json', 'w') as f:
         #     f.write(json_data.encode('utf-8'))
+
+        json.dump(self.job_list, open('14-tecent.json', 'w'))
         print '[INFO]Json数据保存成功!'
 
     def run(self):
         """启动函数"""
-        # 1.循环爬取职位页面信息
-        for page in range(0, 2683, 10):
-            # 1.1.发送请求,返回页面
-            html = self.send_request(self.base_url + str(page))
+        # 1.获取第一页链接
+        html = self.send_request(self.base_url)
+        while True:
+            # 1.2解析页面,返回下一页链接
+            next_link = self.parse_html(html)
+            print '[INFO]第%d页爬取完毕...' % self.page
 
-            # 1.2解析页面,返回解析后的职位字典
-            self.parse_html(html)
-            print '[INFO]第%d页爬取完毕...' % (page / 10 + 1)
-
-            time.sleep(0.5)
-            # 1.3判断是否输入页码,如果有,按页码爬取
-            if (self.pages - 1) * 10 == page:
-                print '[INFO]所有页面爬取完毕!'
+            # 1.3判断是否有下一页,是否输入页码,如果有,按页码爬取
+            if self.want_pages:
+                if self.page >= int(self.want_pages):
+                    break
+            if not next_link:
+                print '[INFO]已到最后一页'
                 break
+            # 否则获取下一页
+            html = self.send_request(next_link)
 
+            # time.sleep(0.5)
+            self.page += 1
+
+        # 存储数据
         self.save_list_to_json()
 
 
