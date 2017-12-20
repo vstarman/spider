@@ -105,6 +105,27 @@ class SpiderJobsLaGo(object):
         json.dump(self.item_list, open('14-lagou_jobs.json', 'w'))
         print "[INFO]: 数据写入成功"
 
+    def save_to_csv(self, filename=None):
+        if not filename:
+            filename = '14-lago_jobs'
+
+        csv_file = file(filename + '.csv', 'w')
+
+        # 创建cvs读写对象,参数为需要处理的文件对象
+        csv_writer = csv.writer(csv_file)
+
+        # 将json中的key坐表头,存入csv第一行
+        sheet = self.item_list[0].keys()
+        # 获取所有的数据部分，二维嵌套列表
+        data = [i.values() for i in self.item_list]
+
+        # 先写入表头部分，一行数据，参数是一个一维列表
+        csv_writer.writerow(sheet)
+        # 再写入数据部分，多行数据，参数是一个二维的列表
+        csv_writer.writerows(data)
+
+        # 关闭文件对象
+        csv_file.close()
 
     def run(self):
         """程序主逻辑函数"""
@@ -118,7 +139,7 @@ class SpiderJobsLaGo(object):
             self.page += 1
 
         # 写入磁盘文件
-        self.save_to_json()
+        self.save_to_csv()
 
     @staticmethod
     def _property(self):
