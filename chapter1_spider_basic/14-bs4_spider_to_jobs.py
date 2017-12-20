@@ -4,7 +4,11 @@ import requests
 import urllib2
 import urllib
 import json
+import time
 from my_user_poll import MY_USER_AGENT
+import sys
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 
 class SpiderJobsLaGo(object):
@@ -53,51 +57,61 @@ class SpiderJobsLaGo(object):
 class SpiderJobsTenCent(object):
     """用来爬取腾讯网招聘信息,存储为json信息"""
     def __init__(self):
-        self.base_url = 'http://hr.tencent.com/'
+        self.base_url = 'http://hr.tencent.com/position.php?&start='
         self.detail_url = 'http://hr.tencent.com/position_detail.php?id=27267&keywords=python&tid=0&lid=2156'
+        self.pages = int(raw_input('请输入要爬取的页数(不输默爬取整站): '))
+        self.headers = {'User-Agent': MY_USER_AGENT[1]}
+        self.job_list = []
 
-    def send_request(self, url, params, **kwargs):
-        requests.get(url, params, **kwargs)
-        pass
+    def send_request(self, url):
+        """发送请求,返回html"""
+        html = requests.get(url, headers=self.headers).content
+        return html
+
+    def parse_html(self, html):
+        """用来解析html数据"""
+        # 1.2 创建BeautifulSoup解析器对象: str-->obj
+        soup = BeautifulSoup(html, 'lxml')
+        job_list = soup.find_all('tr', {'class': ['odd', 'even']})
+
+        # 1.4 遍历列表将每个职位信息存入列表
+        for job in job_list:
+            item = dict()
+            item['position_name'] = job.find('a').get_text()                 # 职位名称
+            item['position_link'] = 'http://hr.tencent.com/' + job.find('a').get('href')     # 详情地址
+            item['position_category'] = job.find_all('td')[1].get_text()     # 职位类别
+            item['hiring_number'] = job.find_all('td')[2].get_text()         # 招聘人数
+            item['work_location'] = job.find_all('td')[3].get_text()         # 工作地点
+            item['publish_time'] = job.find_all('td')[4].get_text()          # 发布时间
+            self.job_list.append(item)
+
+    def save_list_to_json(self):
+        """用来将python列表存储为json数据"""
+        # 存储为json数据,禁用ascii编码处理中文
+        json_data = json.dumps(self.job_list, ensure_ascii=False)
+        with open('14-tecent.json', 'w') as f:
+            f.write(json_data.encode('utf-8'))
+        print '[INFO]Json数据保存成功!'
 
     def run(self):
         """启动函数"""
-        # 1.爬取职位详情链接
-        # 1.1 爬取职位页面信息: 查询参数,头信息
-        url = self.base_url + "position.php?"
-        params = {'keywords': 'python'}
-        params = urllib.urlencode(params)
-        headers = {'UserAgent': MY_USER_AGENT[1]}
-        request = urllib2.Request(url + params, headers=headers)
-        response = urllib2.urlopen(request)
-        resp_html = response.read()
+        # 1.循环爬取职位页面信息
+        for page in range(0, 2683, 10):
+            # 1.1.发送请求,返回页面
+            html = self.send_request(self.base_url + str(page))
 
-        # 1.2 解析页面数据,返回字典数据
+            # 1.2解析页面,返回解析后的职位字典
+            self.parse_html(html)
+            print '[INFO]第%d页爬取完毕...' % (page / 10 + 1)
 
-        # 1.2 创建BeautifulSoup解析器对象: str-->obj
-        soup_html = BeautifulSoup(resp_html, 'lxml')
+            time.sleep(0.5)
+            # 1.3判断是否输入页码,如果有,按页码爬取
+            if (self.pages - 1) * 10 == page:
+                print '[INFO]所有页面爬取完毕!'
+                break
 
-        # 1.3 用css选择器选出每页的10个职位对象
-        job_list = soup_html.select('tr[class="even"],tr[class="odd"]')
-        print '获取了%d个职位信息...' % len(job_list)
+        self.save_list_to_json()
 
-        # 1.4 遍历列表将每个职位信息存入列表
-        items = []
-        for job in job_list:
-            item = dict()
-            item['name'] = job.select('td a')[0].get_text()           # 职位名称
-            item['detailLink'] = job.select('td a')[0].attrs['href']  # 详情地址
-            item['category'] = job.select('td')[1].get_text()         # 职位类别
-            item['recruitNumber'] = job.select('td')[2].get_text()    # 招聘人数
-            item['workLocation'] = job.select('td')[3].get_text()     # 工作地点
-            item['publishTime'] = job.select('td')[4].get_text()      # 发布时间
-            items.append(item)
-
-        # 2.存储为json数据,禁用ascii编码处理中文
-        json_data = json.dumps(items, ensure_ascii=False)
-        with open('14-tecent.json', 'w') as f:
-            f.write(json_data.encode('utf-8'))
-        print '存储成功...'
 
 
 class SpiderZhiHu(object):
@@ -110,7 +124,14 @@ class SpiderZhiHu(object):
 
 
 if __name__ == '__main__':
-    # tx_spider = SpiderJobsTenCent()
-    # tx_spider.run()
-    zh_spider = SpiderZhiHu()
-    zh_spider.run()
+    # 爬取腾讯招聘信息
+    tx_spider = SpiderJobsTenCent()
+    tx_spider.run()
+
+    # 爬取知乎招聘信息
+    # zh_spider = SpiderZhiHu()
+    # zh_spider.run()
+
+    # 爬取拉钩招聘信息
+    # zh_spider = SpiderZhiHu()
+    # zh_spider.run()
