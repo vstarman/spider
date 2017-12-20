@@ -35,15 +35,15 @@ class SpiderJobsLaGo(object):
             "X-Requested-With": "XMLHttpRequest",
         }
         self.proxy_list = []
-        # self.position_name = raw_input("请输入需要抓取的职位:")
-        # self.city_name = raw_input("请输入需要抓取的城市:")
-        # self.want_page = int(raw_input("请输入需要抓取的页数:"))
+        self.position_name = raw_input("请输入需要抓取的职位:")
+        self.city_name = raw_input("请输入需要抓取的城市:")
+        self.want_page = int(raw_input("请输入需要抓取的页数:"))
         self.page = 1
         self.item_list = []
 
-        self.position_name = 'python'
-        self.city_name = '北京'
-        self.want_page = 1
+        # self.position_name = 'python'
+        # self.city_name = '北京'
+        # self.want_page = 1
 
     def send_request(self):
         """发送请求,返回响应"""
@@ -89,9 +89,9 @@ class SpiderJobsLaGo(object):
                 item["financeStage"] = result["financeStage"]
                 item["industryField"] = result["industryField"]
                 item["companySize"] = result["companySize"]
-                item["companyLabelList"] = result["companyLabelList"]
+                item["companyLabelList"] = self.list_to_str(result["companyLabelList"])
                 item["district"] = result["district"]
-                item["positionLables"] = result["positionLables"]
+                item["positionLables"] = self.list_to_str(result["positionLables"])
                 item["companyFullName"] = result["companyFullName"]
                 item["firstType"] = result["firstType"]
                 self.item_list.append(item)
@@ -100,16 +100,27 @@ class SpiderJobsLaGo(object):
         except Exception as e:
             print "[ERROR]: 数据解析失败..."
 
+    @staticmethod
+    def list_to_str(list_pro):
+        """将内层列表转为字符串"""
+        if not list_pro:
+            return ''
+        s = ''
+        for i in list_pro:
+            s += i + ','
+        return s
+
     def save_to_json(self):
         """保存文件到磁盘"""
-        json.dump(self.item_list, open('14-lagou_jobs.json', 'w'))
+        file_name = self.city_name + '_' + self.position_name + '_' + str(self.want_page)
+        json.dump(self.item_list, open(file_name + '_jobs.json', 'w'))
         print "[INFO]: 数据写入成功"
 
-    def save_to_csv(self, filename=None):
-        if not filename:
-            filename = '14-lago_jobs'
+    def save_to_csv(self):
+        """保存文件为csv格式"""
+        file_name = self.city_name + '_' + self.position_name + '_' + str(self.want_page)
 
-        csv_file = file(filename + '.csv', 'w')
+        csv_file = file(file_name + '_jobs.csv', 'w')
 
         # 创建cvs读写对象,参数为需要处理的文件对象
         csv_writer = csv.writer(csv_file)
