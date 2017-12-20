@@ -72,6 +72,8 @@ class SpiderJobsTenCent(object):
         response = urllib2.urlopen(request)
         resp_html = response.read()
 
+        # 1.2 解析页面数据,返回字典数据
+
         # 1.2 创建BeautifulSoup解析器对象: str-->obj
         soup_html = BeautifulSoup(resp_html, 'lxml')
 
@@ -98,6 +100,17 @@ class SpiderJobsTenCent(object):
         print '存储成功...'
 
 
+class SpiderZhiHu(object):
+
+    def run(self):
+        url = 'https://www.zhihu.com/'
+        headers = {'User_Agent': MY_USER_AGENT[1]}
+        html = requests.get(url, headers=headers).content
+        print html
+
+
 if __name__ == '__main__':
-    tx_spider = SpiderJobsTenCent()
-    tx_spider.run()
+    # tx_spider = SpiderJobsTenCent()
+    # tx_spider.run()
+    zh_spider = SpiderZhiHu()
+    zh_spider.run()
