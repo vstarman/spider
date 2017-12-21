@@ -40,6 +40,7 @@ class SpiderJobsLaGo(object):
         self.want_page = int(raw_input("请输入需要抓取的页数:"))
         self.page = 1
         self.item_list = []
+        self.position_num = 0
 
         # self.position_name = 'python'
         # self.city_name = '北京'
@@ -77,26 +78,29 @@ class SpiderJobsLaGo(object):
             # result是列表,json path返回也是列表: [[]]
             result_list = jsonpath.jsonpath(dict_obj, '$..result')[0]
 
-            for result in result_list:
-                item = dict()
-                item["positionName"] = result["positionName"]
-                item["workYear"] = result["workYear"]
-                item["education"] = result["education"]
-                item["createTime"] = result["createTime"]
-                item["city"] = result["city"]
-                item["salary"] = result["salary"]
-                item["positionAdvantage"] = result["positionAdvantage"]
-                item["financeStage"] = result["financeStage"]
-                item["industryField"] = result["industryField"]
-                item["companySize"] = result["companySize"]
-                item["companyLabelList"] = self.list_to_str(result["companyLabelList"])
-                item["district"] = result["district"]
-                item["positionLables"] = self.list_to_str(result["positionLables"])
-                item["companyFullName"] = result["companyFullName"]
-                item["firstType"] = result["firstType"]
-                self.item_list.append(item)
-            print "[INFO]: 第%d页数据保存成功!" % self.page
+            # 判断有无数据
+            if len(result_list):
+                for result in result_list:
+                    item = dict()
+                    item["positionName"] = result["positionName"]
+                    item["workYear"] = result["workYear"]
+                    item["education"] = result["education"]
+                    item["createTime"] = result["createTime"]
+                    item["city"] = result["city"]
+                    item["salary"] = result["salary"]
+                    item["positionAdvantage"] = result["positionAdvantage"]
+                    item["financeStage"] = result["financeStage"]
+                    item["industryField"] = result["industryField"]
+                    item["companySize"] = result["companySize"]
+                    item["companyLabelList"] = self.list_to_str(result["companyLabelList"])
+                    item["district"] = result["district"]
+                    item["positionLables"] = self.list_to_str(result["positionLables"])
+                    item["companyFullName"] = result["companyFullName"]
+                    item["firstType"] = result["firstType"]
+                    self.item_list.append(item)
 
+            print "[INFO]: 第%d页数据保存成功!" % self.page
+            return len(result_list)
         except Exception as e:
             print "[ERROR]: 数据解析失败..."
 
@@ -143,16 +147,28 @@ class SpiderJobsLaGo(object):
         # 1.循环发送请求
         while self.page <= self.want_page:
             response = self.send_request()
-            # 2.解析响应
-            self.parse_page(response)
+
+            # 2.解析响应,返回职位长度
+            data_len = self.parse_page(response)
+            self.position_num += data_len
+
+            print "[INFO]已抓取数据%d条..." % self.position_num
+            if not data_len:
+                print "[INFO]抓取数据完毕"
+                break
 
             time.sleep(0.3)
             self.page += 1
 
         # 写入磁盘文件
         self.save_to_csv()
+        # self.save_to_json()
 
-    @staticmethod
+    @property
+    def positions(self):
+        return self.item_list
+
+    @positions.setter
     def _property(self):
         """此类用于测试property方法
            property(fget=None, fset=None, fdel=None, doc=None) -> property attribute
