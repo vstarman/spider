@@ -164,43 +164,6 @@ class SpiderJobsLaGo(object):
         self.save_to_csv()
         # self.save_to_json()
 
-    @property
-    def positions(self):
-        return self.item_list
-
-    @positions.setter
-    def _property(self):
-        """此类用于测试property方法
-           property(fget=None, fset=None, fdel=None, doc=None) -> property attribute
-
-           fget is a function to be used for getting an attribute value, and likewise
-           fset is a function for setting, and fdel a function for del'ing, an
-           attribute.  Typical use is to define a managed attribute x:
-
-           class C(object):
-               def getx(self): return self._x
-               def setx(self, value): self._x = value
-               def delx(self): del self._x
-               x = property(getx, setx, delx, "I'm the 'x' property.")
-
-           Decorators make defining new properties or modifying existing ones easy:
-
-           class C(object):
-               @property
-               def x(self):
-                   "I am the 'x' property."
-                   return self._x
-               @x.setter
-               def x(self, value):
-                   self._x = value
-               @x.deleter
-               def x(self):
-                   del self._x
-
-           # (copied from class doc)
-           """
-        pass
-
 
 if __name__ == '__main__':
     # 爬取拉钩招聘信息
