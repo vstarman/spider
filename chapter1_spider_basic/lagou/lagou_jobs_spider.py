@@ -9,6 +9,7 @@ import time
 import csv
 import jsonpath
 import sys
+import pymongo
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -37,7 +38,9 @@ class SpiderJobsLaGo(object):
         self.proxy_list = []
         self.position_name = raw_input("请输入需要抓取的职位:")
         self.city_name = raw_input("请输入需要抓取的城市:")
-        self.want_page = int(raw_input("请输入需要抓取的页数:"))
+        self.want_page = raw_input("请输入需要抓取的页数:")
+        if not self.want_page:
+            self.want_page = 'all'
         self.page = 1
         self.item_list = []
         self.position_num = 0
@@ -116,13 +119,13 @@ class SpiderJobsLaGo(object):
 
     def save_to_json(self):
         """保存文件到磁盘"""
-        file_name = self.city_name + '_' + self.position_name + '_' + str(self.want_page)
+        file_name = self.city_name + '_' + self.position_name + '_' + self.want_page
         json.dump(self.item_list, open(file_name + '_jobs.json', 'w'))
         print "[INFO]: 数据写入成功"
 
     def save_to_csv(self):
         """保存文件为csv格式"""
-        file_name = self.city_name + '_' + self.position_name + '_' + str(self.want_page)
+        file_name = self.city_name + '_' + self.position_name + '_' + self.want_page
 
         csv_file = file(file_name + '_jobs.csv', 'w')
 
@@ -142,10 +145,28 @@ class SpiderJobsLaGo(object):
         # 关闭文件对象
         csv_file.close()
 
+    def save_to_MongoDB(self):
+        """存储数据到MongoDB数据库"""
+        try:
+            # 创建链接对象
+            client = pymongo.MongoClient()
+            # 建库对象
+            db = client['MongoDB_LaGou']
+            # 建集合对象
+            set_name = self.city_name + '_' + self.position_name + '_' + self.want_page
+            collections = db[set_name]
+            # 插入数据
+            collections.insert(self.item_list)
+
+            print '[叮咚]数据存储成功...'
+        except Exception as e:
+            print e
+            print '[叮咚]数据存储失败...'
+
     def run(self):
         """程序主逻辑函数"""
         # 1.循环发送请求
-        while self.page <= self.want_page:
+        while str(self.page) <= self.want_page:
             response = self.send_request()
 
             # 2.解析响应,返回职位长度
@@ -161,8 +182,11 @@ class SpiderJobsLaGo(object):
             self.page += 1
 
         # 写入磁盘文件
-        self.save_to_csv()
+        # self.save_to_csv()
         # self.save_to_json()
+
+        # 写入数据库
+        self.save_to_MongoDB()
 
 
 if __name__ == '__main__':
