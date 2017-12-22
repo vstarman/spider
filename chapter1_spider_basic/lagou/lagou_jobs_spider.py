@@ -15,7 +15,11 @@ sys.setdefaultencoding('utf-8')
 
 
 class SpiderJobsLaGo(object):
-    """此类用来爬取拉钩网的工作信息"""
+    """此类用来爬取拉钩网的工作信息
+    包含:
+    1.循环爬取拉勾网数据;
+    2.并可选择将数据保存为json文件,csv文件,和MongoDB数据库
+    """
     def __init__(self):
         self.url = 'https://www.lagou.com/jobs/positionAjax.json?'
         self.headers = {
@@ -145,7 +149,7 @@ class SpiderJobsLaGo(object):
         # 关闭文件对象
         csv_file.close()
 
-    def save_to_MongoDB(self):
+    def save_to_MongoDB(self, set_name=None):
         """存储数据到MongoDB数据库"""
         try:
             # 创建链接对象
@@ -153,7 +157,8 @@ class SpiderJobsLaGo(object):
             # 建库对象
             db = client['MongoDB_LaGou']
             # 建集合对象
-            set_name = self.city_name + '_' + self.position_name + '_' + self.want_page
+            if not set_name:
+                set_name = self.city_name + '_' + self.position_name + '_' + self.want_page
             collections = db[set_name]
             # 插入数据
             collections.insert(self.item_list)

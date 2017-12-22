@@ -5,7 +5,7 @@ import json
 
 
 class LaGouDB(object):
-    def __init__(self, host, port):
+    def __init__(self, host=None, port=None):
         if not all([host, port]):
             host = '127.0.0.1'
             port = 27017
@@ -20,7 +20,7 @@ class LaGouDB(object):
         # 指定数据库名称
         self.db = self.client['MongoDB_LaGou']
         # 指定集合名称
-        self.collection = self.db['jobs']
+        self.collection = self.db[u'北京_python_30']
 
     def __close(self):
         self.json_file.close()
@@ -44,5 +44,5 @@ class LaGouDB(object):
 
 
 if __name__ == '__main__':
-    lago = LaGouDB('127.0.0.1', 27017)
-    lago.run('北京_python_30_jobs.json')
+    lago = LaGouDB()
+    lago.run(u'北京_python_30_jobs.json')
