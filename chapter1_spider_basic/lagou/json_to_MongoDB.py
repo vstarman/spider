@@ -6,6 +6,9 @@ import json
 
 class LaGouDB(object):
     def __init__(self, host, port):
+        if not all([host, port]):
+            host = '127.0.0.1'
+            port = 27017
         self.host = host
         self.port = port
 
@@ -22,10 +25,10 @@ class LaGouDB(object):
     def __close(self):
         self.json_file.close()
 
-    def run(self):
+    def run(self, file_name):
         try:
             # 1.创建文件操作对象,数据库操作对象
-            self.__open('北京_python_30_jobs.json')
+            self.__open(file_name)
             # 2.生成json对象
             json_obj = json.load(self.json_file)
             # 3.将数据写入数据库
@@ -42,4 +45,4 @@ class LaGouDB(object):
 
 if __name__ == '__main__':
     lago = LaGouDB('127.0.0.1', 27017)
-    lago.run()
+    lago.run('北京_python_30_jobs.json')
