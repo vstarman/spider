@@ -8,9 +8,9 @@ from lxml import etree
 class TBSpider:
     """贴吧类"""
     def __init__(self):
-        self.bar_name = '欧洲'#raw_input('请输入贴吧名: ')
-        self.begin_page = 1#int(raw_input('起始页: '))
-        self.end_page = 1#int(raw_input('终止页: '))
+        self.bar_name = raw_input('请输入贴吧名: ')
+        self.begin_page = int(raw_input('起始页: '))
+        self.end_page = int(raw_input('终止页: '))
 
         # http://tieba.baidu.com/f?kw=%E7%A9%B7%E6%B8%B8&ie=utf-8&pn=50
         self.url_base = 'http://tieba.baidu.com/f?'
