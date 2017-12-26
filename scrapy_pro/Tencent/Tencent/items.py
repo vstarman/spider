@@ -8,11 +8,7 @@
 import scrapy
 
 
-class TestItem(scrapy.Item):
+class TencentItem(scrapy.Item):
     # define the fields for your item here like:
-    name = scrapy.Field()
-    # pass
-
-from items import TestItem
-item = TestItem()
-item['name'] = 'xxx'
+    # name = scrapy.Field()
+    pass
