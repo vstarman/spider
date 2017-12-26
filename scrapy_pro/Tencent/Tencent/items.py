@@ -8,7 +8,23 @@
 import scrapy
 
 
-class TencentItem(scrapy.Item):
+class PositionItem(scrapy.Item):
+    """Position info"""
     # define the fields for your item here like:
-    # name = scrapy.Field()
-    pass
+    position_name = scrapy.Field()
+    position_link = scrapy.Field()
+    position_type = scrapy.Field()
+    position_nums = scrapy.Field()
+    work_location = scrapy.Field()
+    publish_time = scrapy.Field()
+    # 爬取时间
+    crawl_time = scrapy.Field()
+
+
+class RequireItem(scrapy.Item):
+    """Position require"""
+    # define the fields for your item here like:
+    position_require = scrapy.Field()
+    position_duty = scrapy.Field()
+    # 爬取时间
+    crawl_time = scrapy.Field()
