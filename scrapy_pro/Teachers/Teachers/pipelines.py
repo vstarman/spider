@@ -8,6 +8,9 @@ import json
 
 
 class TeachersPipeline(object):
+    def __init__(self):
+        self.file_name = None
+
     # 爬虫启动的时候调用
     def open_spider(self, spider):
         self.file_name = open("itcast.json", "w")
