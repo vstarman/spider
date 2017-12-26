@@ -15,11 +15,11 @@ class SpiderDB250(object):
         self.start_url = ['https://movie.douban.com/top250?start=%d' % i for i in range(0, 226, 25)]
         self.headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) \
                         Chrome/63.0.3239.84 Safari/537.36'}
-        # self.prox =
+        self.proxy = {"http": "mr_mao_hacker:sffqry9r@120.27.218.32:16816"}
 
     def send_request(self, url):
         """发送请求,且将响应对象传parse_page解析"""
-        response = requests.get(url, headers=self.headers)
+        response = requests.get(url, headers=self.headers, proxies=self.proxy)
         self.parse_page(response)
 
     def parse_page(self, response):
