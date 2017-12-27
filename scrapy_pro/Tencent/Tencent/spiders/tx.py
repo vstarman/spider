@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import scrapy
 from Tencent.items import PositionItem, RequireItem
+from scrapy.spider import CrawlSpider, Rule
 
 
 class TxSpider(scrapy.Spider):

@@ -17,6 +17,7 @@ class PositionItem(scrapy.Item):
     position_nums = scrapy.Field()
     work_location = scrapy.Field()
     publish_time = scrapy.Field()
+    source = scrapy.Field()
     # 爬取时间
     crawl_time = scrapy.Field()
 
@@ -26,5 +27,6 @@ class RequireItem(scrapy.Item):
     # define the fields for your item here like:
     position_require = scrapy.Field()
     position_duty = scrapy.Field()
+    source = scrapy.Field()
     # 爬取时间
     crawl_time = scrapy.Field()

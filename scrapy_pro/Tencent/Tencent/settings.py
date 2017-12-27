@@ -21,10 +21,10 @@ USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML
               Chrome/63.0.3239.84 Safari/537.36"
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+# ROBOTSTXT_OBEY = True
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-# CONCURRENT_REQUESTS = 32
+CONCURRENT_REQUESTS = 320
 #
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
@@ -66,10 +66,10 @@ COOKIES_ENABLED = False
 #
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
-# ITEM_PIPELINES = {
-#    'Tencent.pipelines.TencentPipeline': 300,
-#    'Tencent.pipelines.TencentPipeline': 300,
-# }
+ITEM_PIPELINES = {
+   'Tencent.pipelines.TencentPipeline': 300,
+   # 'Tencent.pipelines.TencentPipeline': 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html
