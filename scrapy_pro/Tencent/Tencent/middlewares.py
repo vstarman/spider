@@ -20,5 +20,5 @@ class UserAgentMiddleware(object):
 class ProxyMiddleware(object):
     """设置用户user-agent的类"""
     def process_request(self, request, spider):
-        proxy = "http://mr_mao_hacker:sffqry9r@120.27.218.32:16816"
+        proxy = "http://47.94.145.238:3128"
         request.meta["proxy"] = proxy

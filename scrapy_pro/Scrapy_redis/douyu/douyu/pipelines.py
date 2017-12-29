@@ -20,7 +20,8 @@ class ImgPipeline(ImagesPipeline):
 
     def item_completed(self, results, item, info):
         img_path = [x['path'] for ok, x in results if ok]
-        new_path = self.IMAGES_STORE + item['name']
+        new_path = self.IMAGES_STORE + item['name'] + '.jpg'
+        # print new_path
         item['image_path'] = new_path
         os.rename(self.IMAGES_STORE + img_path[0], new_path)
         # print img_path

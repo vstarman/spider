@@ -14,17 +14,20 @@ BOT_NAME = 'Tencent'
 SPIDER_MODULES = ['Tencent.spiders']
 NEWSPIDER_MODULE = 'Tencent.spiders'
 
+# LOG_FILE = "baidu.log"
+# 只显示INFO及以上的信息，DEBUG信息不显示
+LOG_LEVEL = "INFO"
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 # USER_AGENT = 'Tencent (+http://www.yourdomain.com)'
-USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) \
-              Chrome/63.0.3239.84 Safari/537.36"
+# USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) \
+#               Chrome/63.0.3239.84 Safari/537.36"
 
 # Obey robots.txt rules
 # ROBOTSTXT_OBEY = True
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
-CONCURRENT_REQUESTS = 320
+# CONCURRENT_REQUESTS = 320
 #
 # Configure a delay for requests for the same website (default: 0)
 # See http://scrapy.readthedocs.org/en/latest/topics/settings.html#download-delay
@@ -54,9 +57,10 @@ COOKIES_ENABLED = False
 #
 # Enable or disable downloader middlewares
 # See http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
-# DOWNLOADER_MIDDLEWARES = {
-#    'Tencent.middlewares.MyCustomDownloaderMiddleware': 543,
-# }
+DOWNLOADER_MIDDLEWARES = {
+   'Tencent.middlewares.UserAgentMiddleware': 333,
+   'Tencent.middlewares.ProxyMiddleware': 444,
+}
 #
 # Enable or disable extensions
 # See http://scrapy.readthedocs.org/en/latest/topics/extensions.html
@@ -68,7 +72,7 @@ COOKIES_ENABLED = False
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
    'Tencent.pipelines.TencentPipeline': 300,
-   # 'Tencent.pipelines.TencentPipeline': 300,
+   'Tencent.pipelines.RequirePipeline': 400,
 }
 
 # User-Agent-Poll

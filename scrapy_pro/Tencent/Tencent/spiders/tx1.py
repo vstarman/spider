@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 import scrapy
 import time
-from Tencent.items import PositionItem
+from Tencent.items import PositionItem, RequireItem
 from scrapy.spiders import CrawlSpider, Rule
 
 
-class TxSpider(scrapy.Spider):
-    name = 'tx'
+class Tx1Spider(scrapy.Spider):
+    name = 'tx1'
     allowed_domains = ['hr.tencent.com']
     base_url = 'http://hr.tencent.com/position.php?keywords=&lid=0&start='
     start_urls = [base_url + str(i) for i in range(0, 2681, 10)]
@@ -21,27 +21,22 @@ class TxSpider(scrapy.Spider):
         # print '-' * 100
         for node in node_list:
             item = PositionItem()
-            item['position_link'] = node.xpath('./td/a/@href').extract_first()
-            item['position_name'] = node.xpath('./td/a/text()').extract_first()
+            item['position_link'] = 'http://hr.tencent.com/' + node.xpath('.//a/@href').extract_first()
+            item['position_name'] = node.xpath('.//a/text()').extract_first()
             item['position_type'] = node.xpath('./td[2]/text()').extract_first()
             item['position_nums'] = node.xpath('./td[3]/text()').extract_first()
             item['work_location'] = node.xpath('./td[4]/text()').extract_first()
             item['publish_time'] = node.xpath('./td[5]/text()').extract_first()
-            time.sleep(1)
+            # time.sleep(0.1)
+            print item['position_link']
+            # meta 传递数据给callack函数
+            yield scrapy.Request(url=item['position_link'], meta={'item': item}, callback=self.parse_page)
             yield item
 
-        """
-        # 1. 适用于确定页码，一直循环判断并自增
-        # 优点是写法简单，缺点是并没有用到scrapy的并发
-        if self.offset < 2681:
-                self.offset += 10
-                yield scrapy.Request(url=self.base_url + str(self.offset), callback=self.parse)
-        """
-        """
-        # 2. 通过点击下一页控制页面跳转
-        # 如果到了最后一页，返回非None值
-        # 如果没有到最后一页，返回None
-        if not response.xpath("//a[@class='noactive' and @id='next']/@href").extract_first():
-            next_link = "http://hr.tencent.com/" + response.xpath("//a[@id='next']/@href").extract_first()
-            yield scrapy.Request(url=next_link, callback=self.parse)
-        """
+    def parse_page(self, response):
+        # item = response.meta['item']
+        item = RequireItem()
+        item['position_require'] = ''.join(response.xpath('//ul[@class="squareli"]')[0].xpath('./li/text()').extract())
+        item['position_duty'] = ''.join(response.xpath('//ul[@class="squareli"]')[1].xpath('./li/text()').extract())
+        print '-'*100
+        yield item
