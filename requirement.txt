@@ -17,7 +17,7 @@ cssselect==0.9.2
 cssutils==1.0
 Cython==0.24
 decorator==4.0.6
-Django==1.8.7
+Django==1.11.28
 dnspython==1.12.0
 easydict==1.6
 enum34==1.1.6
