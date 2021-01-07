@@ -30,7 +30,7 @@ ipython==2.4.1
 jieba==0.38
 jsonpath==0.54
 kombu==4.0.2
-lxml==3.5.0
+lxml==4.6.2
 Markdown==2.6.6
 mechanize==0.2.5
 motor==0.2
