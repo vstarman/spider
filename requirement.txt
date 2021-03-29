@@ -53,7 +53,7 @@ pybloomfiltermmap==0.3.12
 pycparser==2.14
 pycrypto==2.6.1
 PyDispatcher==2.0.5
-Pygments==2.1
+Pygments==2.7.4
 pymongo==2.7
 pyOpenSSL==16.0.0
 python-dateutil==2.4.2
