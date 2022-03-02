@@ -65,7 +65,7 @@ repoze.lru==0.6
 requests==2.10.0
 Routes==2.2
 rq==0.6.0
-Scrapy==1.1.0
+Scrapy==1.8.2
 scrapy-redis==0.6.3
 scrapyd==1.1.0
 scrapyd-client==1.0.1
